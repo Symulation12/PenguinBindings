@@ -1,0 +1,6 @@
+## Interface: 50400
+## Title : PenguinBindings
+## Notes : Keybind like a... Penguin?
+## Version : 0.0
+## Author : SymulatePenguins
+PenguinBindings.lua
