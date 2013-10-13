@@ -37,105 +37,119 @@ end
 -- ALL THE EVENTS!
 local function onEvent(self,event,...)
 	if event == "ADDON_LOADED" then --on load
-		if not loaded then
-			if not PenguinBindVars then
-				PenguinBindVars = {
-					bindsSpell = {},
-					bindsItem = {},
-					bindsMacro = {}
+		local whichAddon = ...
+		if whichAddon == "PenguinBindings" then
+			if not loaded then
+				if not PenguinBindVars then
+					PenguinBindVars = {
+						bindsSpell = {},
+						bindsItem = {},
+						bindsMacro = {}
+					}
+				end
+				StaticPopupDialogs["PENGUINBIND_ENABLEBINDMODE"] = {
+					text = "Enable Bind Mode?",
+					button1 = "Yes",
+					button2 = "No",
+					OnAccept = function()
+						bindMode = true;
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
 				}
-			end
-			StaticPopupDialogs["PENGUINBIND_ENABLEBINDMODE"] = {
-				text = "Enable Bind Mode?",
-				button1 = "Yes",
-				button2 = "No",
-				OnAccept = function()
-					bindMode = true;
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopupDialogs["PENGUINBIND_DISABLEBINDMODE"] = {
-				text = "Disable Bind Mode?",
-				button1 = "Yes",
-				button2 = "No",
-				OnAccept = function()
-					bindMode = false;
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopupDialogs["PENGUINBIND_BINDKEY"] = {
-				text = "Do you want to bind %s to %s?",
-				button1 = "Yes",
-				button2 = "No",
-				OnAccept = function(self,bindType,bindKey,bindValue)
-					createBinding[self.bindType](self.bindKey,self.bindValue)
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopupDialogs["PENGUINBIND_BINDOVERRIDE"] = {
-				text = "%s is already bound to %s, do you want to override binding?",
-				button1 = "Yes",
-				button2 = "No",
-				OnAccept = function(self,bindType,bindKey,bindValue)
-					createBinding[self.bindType](self.bindKey,self.bindValue)
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopupDialogs["PENGUINBIND_CLEARBIND"] = {
-				text = "Clear binding on %s?",
-				button1 = "Yes",
-				button2 = "No",
-				OnAccept = function(self,bindKey)
-					clearBind(self.bindKey)
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopupDialogs["PENGUINBIND_SETBIND"] = {
-				text = "Click button when binding is right",
-				button1 = "Looks Good",
-				OnAccept = function(self,bindValue,bindType)
-					local bStr = checkBind(self.button1:GetText())
-					local dialog = nil
-					if bStr == "" then
-						dialog = StaticPopup_Show("PENGUINBIND_BINDKEY",self.bindValue,self.button1:GetText())
-					else
-						dialog = StaticPopup_Show("PENGUINBIND_BINDOVERRIDE",self.button1:GetText(),bStr)
-					end
-					if dialog then
-						dialog.bindType = self.bindType
-						dialog.bindKey = self.button1:GetText()
-						dialog.bindValue = self.bindValue
-					end
-					
+				StaticPopupDialogs["PENGUINBIND_DISABLEBINDMODE"] = {
+					text = "Disable Bind Mode?",
+					button1 = "Yes",
+					button2 = "No",
+					OnAccept = function()
+						bindMode = false;
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopupDialogs["PENGUINBIND_BINDKEY"] = {
+					text = "Do you want to bind %s to %s?",
+					button1 = "Yes",
+					button2 = "No",
+					OnAccept = function(self,bindType,bindKey,bindValue)
+						createBinding[self.bindType](self.bindKey,self.bindValue)
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopupDialogs["PENGUINBIND_BINDOVERRIDE"] = {
+					text = "%s is already bound to %s, do you want to override binding?",
+					button1 = "Yes",
+					button2 = "No",
+					OnAccept = function(self,bindType,bindKey,bindValue)
+						createBinding[self.bindType](self.bindKey,self.bindValue)
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopupDialogs["PENGUINBIND_CLEARBIND"] = {
+					text = "Clear binding on %s?",
+					button1 = "Yes",
+					button2 = "No",
+					OnAccept = function(self,bindKey)
+						clearBind(self.bindKey)
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopupDialogs["PENGUINBIND_SETBIND"] = {
+					text = "Click button when binding is right",
+					button1 = "Looks Good",
+					OnAccept = function(self,bindValue,bindType)
+						local bStr = checkBind(self.button1:GetText())
+						local dialog = nil
+						if bStr == "" then
+							dialog = StaticPopup_Show("PENGUINBIND_BINDKEY",self.bindValue,self.button1:GetText())
+						else
+							dialog = StaticPopup_Show("PENGUINBIND_BINDOVERRIDE",self.button1:GetText(),bStr)
+						end
+						if dialog then
+							dialog.bindType = self.bindType
+							dialog.bindKey = self.button1:GetText()
+							dialog.bindValue = self.bindValue
+						end
 						
-					
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			--Load bindings
-			for k,v in pairs(PenguinBindVars.bindsSpell) do
-				SetBindingSpell(k,v)
+							
+						
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				--Load bindings
+				for k,v in pairs(PenguinBindVars.bindsSpell) do
+					SetBindingSpell(k,v)
+				end
+				
 			end
+			loaded = true
+		elseif whichAddon == "Blizzard_MacroUI" then
+			--Hook into macro blizz addon
+			MacroFrame:HookScript("OnShow",macroOpening)
+			MacroFrameSelectedMacroButton:HookScript("OnEnter",function(self)
+				local mName,mIconTexture,mBody,mIsLocal = GetMacroInfo(MacroFrame.selectedMacro)
+				local boundKey = GetBindingKey("MACRO "..mName)
+				if boundKey then
+					pPrint(mName.." is bound to "..boundKey)
+				end
+			end)
 		end
-		loaded = true
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then --on spec change
 		pPrint("You changed talents!")
 	elseif event == "UPDATE_SHAPESHIFT_FORM" then --TRANSFORM!
@@ -156,7 +170,6 @@ local function spellSelected(tooltip)
 				if dialog then
 					dialog.bindValue = sName
 					dialog.bindType = "spell"
-					local script = dialog.button1:GetScript("OnMouseUp") -- dialog.button3:SetScript("OnKeyDown",script)
 					dialog.button1:SetScript("OnKeyDown",function(self,button)
 						if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
 						if IsShiftKeyDown() then
@@ -205,7 +218,6 @@ local function itemSelected(tooltip)
 				if dialog then
 					dialog.bindValue = iName
 					dialog.bindType = "item"
-					local script = dialog.button1:GetScript("OnMouseUp") -- dialog.button3:SetScript("OnKeyDown",script)
 					dialog.button1:SetScript("OnKeyDown",function(self,button)
 						if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
 						if IsShiftKeyDown() then
@@ -243,6 +255,50 @@ local function itemSelected(tooltip)
 	end
 	
 end
+
+function macroOpening(mWindow)
+	if bindMode then
+		pPrint("Macro frame opened, stealing on mouse down event")
+		local script1,script2 = MacroFrameSelectedMacroButton:GetScript("OnMouseWheel"),mWindow:GetScript("OnHide")
+		MacroFrameSelectedMacroButton:SetScript("OnMouseWheel",function(self,delta)
+			local mName,mIconTexture,mBody,mIsLocal = GetMacroInfo(MacroFrame.selectedMacro)
+			if delta == 1 then
+				local dialog = StaticPopup_Show("PENGUINBIND_SETBIND")
+				if dialog then
+					dialog.bindValue = mName
+					dialog.bindType = "macro"
+					dialog.button1:SetScript("OnKeyDown",function(self,button)
+						if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
+						if IsShiftKeyDown() then
+							button = "SHIFT-"..button
+						end
+						if IsControlKeyDown() then
+							button = "CTRL-"..button
+						end
+						if IsAltKeyDown() then
+							button ="ALT-"..button
+						end
+						self:SetText(button)
+					end)
+					
+				end
+			else
+				local bKey = GetBindingKey("MACRO "..mName)
+				if bKey then
+					local dialog = StaticPopup_Show("PENGUINBIND_CLEARBIND",mName)
+					if dialog then
+						dialog.bindKey = bKey
+					end
+				end
+			end
+		end)
+		mWindow:SetScript("OnHide",function(self)
+			MacroFrameSelectedMacroButton:SetScript("OnMouseWheel",script1)
+			self:SetScript("OnHide",script2)
+		end)
+	end
+end
+
 
 -- Slash Command
 SLASH_PENGUINBINDINGS1,SLASH_PENGUINBINDINGS2 = "/pb","/penguinbindings"
