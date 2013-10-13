@@ -194,6 +194,56 @@ local function spellSelected(tooltip)
 	end
 end
 
+local function itemSelected(tooltip)
+	local iName,iLink = tooltip:GetItem()
+	if bindMode then
+		local mFocus = GetMouseFocus()
+		local script1,script2 = mFocus:GetScript("OnMouseWheel"),mFocus:GetScript("OnLeave")
+		mFocus:SetScript("OnMouseWheel",function(self,delta)
+			if delta == 1 then
+				local dialog = StaticPopup_Show("PENGUINBIND_SETBIND")
+				if dialog then
+					dialog.bindValue = iName
+					dialog.bindType = "item"
+					local script = dialog.button1:GetScript("OnMouseUp") -- dialog.button3:SetScript("OnKeyDown",script)
+					dialog.button1:SetScript("OnKeyDown",function(self,button)
+						if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
+						if IsShiftKeyDown() then
+							button = "SHIFT-"..button
+						end
+						if IsControlKeyDown() then
+							button = "CTRL-"..button
+						end
+						if IsAltKeyDown() then
+							button ="ALT-"..button
+						end
+						self:SetText(button)
+					end)
+					
+				end
+			else
+				local bKey = GetBindingKey("ITEM "..iName)
+				if bKey then
+					local dialog = StaticPopup_Show("PENGUINBIND_CLEARBIND",iName)
+					if dialog then
+						dialog.bindKey = bKey
+					end
+				end
+			end
+		end)
+		mFocus:SetScript("OnLeave",function(self,motion)
+			mFocus:SetScript("OnMouseWheel",script1)
+			tooltip:Hide()
+			mFocus:SetScript("OnLeave",script2)
+		end)
+	end
+	local boundKey = GetBindingKey("ITEM "..iName)
+	if boundKey then
+		tooltip:AddLine("Bound to: "..boundKey)
+	end
+	
+end
+
 -- Slash Command
 SLASH_PENGUINBINDINGS1,SLASH_PENGUINBINDINGS2 = "/pb","/penguinbindings"
 SlashCmdList["PENGUINBINDINGS"] = function(argString,editbox)
@@ -208,7 +258,7 @@ SlashCmdList["PENGUINBINDINGS"] = function(argString,editbox)
 			if not StaticPopup_Show("PENGUINBIND_DISABLEBINDMODE") then pPrint("It didn't work :(") end
 		end
 	elseif args[1] == "save" then
-		SaveBindings(tonumber(args[2]))
+		SaveBindings(tonumber(args[2] or 2))
 	end
 	
 end
@@ -219,3 +269,4 @@ penguinFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM") -- YOU TRANSFORMED!
 penguinFrame:RegisterEvent("PLAYER_LOGOUT")
 penguinFrame:SetScript("OnEvent",onEvent) --A thing happened!
 GameTooltip:HookScript("OnTooltipSetSpell", spellSelected) --Tooltip has spell in it!
+GameTooltip:HookScript("OnTooltipSetItem",itemSelected)
