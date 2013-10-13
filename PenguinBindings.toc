@@ -3,4 +3,5 @@
 ## Notes : Keybind like a... Penguin?
 ## Version : 0.0
 ## Author : SymulatePenguins
+##SavedVariablesPerCharacter PenguinBindVars
 PenguinBindings.lua
