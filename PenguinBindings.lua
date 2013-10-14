@@ -28,13 +28,14 @@ local createBinding = {
 		return SetBindingMacro(key,macroId)
 	end
 }
--- Clears a binding
+-- Clears a binding and deregisters it
 local function clearBind(key)
 	if PenguinBindVars[currentProfile].bindsMacro[key] then PenguinBindVars[currentProfile].bindsMacro[key] = nil end
 	if PenguinBindVars[currentProfile].bindsSpell[key] then PenguinBindVars[currentProfile].bindsSpell[key] = nil end
 	if PenguinBindVars[currentProfile].bindsItem[key] then PenguinBindVars[currentProfile].bindsItem[key] = nil end
 	SetBinding(key)
 end
+-- Only clears bindings
 local function clearSpellBinding()
 	for k,v in pairs(PenguinBindVars[currentProfile].bindsSpell) do
 		SetBinding(k)
@@ -55,6 +56,7 @@ local function clearAllBindings()
 	clearItemBinding()
 	clearMacroBinding()
 end
+
 -- Switches bindings on keys in the profile
 local function profileBind()
 	for k,v in pairs(PenguinBindVars[currentProfile].bindsSpell) do
@@ -70,10 +72,10 @@ end
 
 -- ALL THE EVENTS!
 local function onEvent(self,event,...)
-	if event == "ADDON_LOADED" then --on load
+	if event == "ADDON_LOADED" then --Addon was loaded
 		local whichAddon = ...
-		if whichAddon == "PenguinBindings" then
-			if PenguinBindVars == nil then
+		if whichAddon == "PenguinBindings" then --If it was my addon
+			if PenguinBindVars == nil then -- If the addon hasn't been run before
 				pPrint("First run!")
 				PenguinBindVars = {
 					profiles = {
@@ -87,10 +89,12 @@ local function onEvent(self,event,...)
 					cP = 1
 					
 				}
-			else
+			else -- If the addon has been run before
 				pPrint(PenguinBindVars.cP)
 				currentProfile = PenguinBindVars.cP
 			end
+			---------------- POPUP WINDOWS --------------------
+				--Enable Bind Mode
 			StaticPopupDialogs["PENGUINBIND_ENABLEBINDMODE"] = {
 				text = "Enable Bind Mode?",
 				button1 = "Yes",
@@ -103,6 +107,7 @@ local function onEvent(self,event,...)
 				hideOnEscape = true,
 				preferredIndex = 3,
 			}
+			--Disable Bind Mode
 			StaticPopupDialogs["PENGUINBIND_DISABLEBINDMODE"] = {
 				text = "Disable Bind Mode?",
 				button1 = "Yes",
@@ -115,6 +120,7 @@ local function onEvent(self,event,...)
 				hideOnEscape = true,
 				preferredIndex = 3,
 			}
+				--Bind check
 			StaticPopupDialogs["PENGUINBIND_BINDKEY"] = {
 				text = "Do you want to bind %s to %s?",
 				button1 = "Yes",
@@ -127,6 +133,7 @@ local function onEvent(self,event,...)
 				hideOnEscape = true,
 				preferredIndex = 3,
 			}
+				-- Bind check if override
 			StaticPopupDialogs["PENGUINBIND_BINDOVERRIDE"] = {
 				text = "%s is already bound to %s, do you want to override binding?",
 				button1 = "Yes",
@@ -139,6 +146,7 @@ local function onEvent(self,event,...)
 				hideOnEscape = true,
 				preferredIndex = 3,
 			}
+			-- Clear a binding
 			StaticPopupDialogs["PENGUINBIND_CLEARBIND"] = {
 				text = "Clear binding on %s?",
 				button1 = "Yes",
@@ -151,6 +159,7 @@ local function onEvent(self,event,...)
 				hideOnEscape = true,
 				preferredIndex = 3,
 			}
+				-- Set the binding
 			StaticPopupDialogs["PENGUINBIND_SETBIND"] = {
 				text = "Click button when binding is right",
 				button1 = "Looks Good",
@@ -176,6 +185,7 @@ local function onEvent(self,event,...)
 				hideOnEscape = true,
 				preferredIndex = 3,
 			}
+			-- Check if you want to mass clear bindings
 			StaticPopupDialogs["PENGUINBIND_CLEARCHECK"] = {
 				text = "Do you really want to clear bindings on %s?",
 				button1 = "Yes",
@@ -200,7 +210,7 @@ local function onEvent(self,event,...)
 				hideOnEscape = true,
 				preferredIndex = 3,
 			}
-		elseif whichAddon == "Blizzard_MacroUI" then
+		elseif whichAddon == "Blizzard_MacroUI" then -- Macro hook
 			--Hook into macro blizz addon
 			MacroFrame:HookScript("OnShow",macroOpening)
 			MacroFrameSelectedMacroButton:HookScript("OnEnter",function(self)
@@ -236,7 +246,7 @@ local function onEvent(self,event,...)
 	end
 end
 
--- Handler for spell info in tooltip
+-- Detects when a spell is in the tooltip, and puts it's binding or lets me bind it
 local function spellSelected(tooltip)
 	local sName,sRank,sID = tooltip:GetSpell()
 	if bindMode then
@@ -284,7 +294,7 @@ local function spellSelected(tooltip)
 		tooltip:AddLine("Bound to: "..boundKey)
 	end
 end
-
+-- Same, but for items
 local function itemSelected(tooltip)
 	local iName,iLink = tooltip:GetItem()
 	if bindMode then
@@ -333,7 +343,7 @@ local function itemSelected(tooltip)
 	end
 	
 end
-
+-- Slightly different from the other two, but same goal 
 function macroOpening(mWindow)
 	if bindMode then
 		pPrint("Macro frame opened, stealing on mouse down event")
@@ -425,9 +435,6 @@ SlashCmdList["PENGUINBINDINGS"] = function(argString,editbox)
 			else
 				pPrint("Profile doesn't exist")
 			end
-		elseif args[2] == trigger then
-			
-		
 		elseif args[2] == nil then
 			pPrint(currentProfile.."."..PenguinBindVars.profiles[currentProfile])
 		end
