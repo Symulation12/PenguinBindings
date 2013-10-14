@@ -13,10 +13,10 @@ Plan:
 Complete:
 	Bind Spells/Items/Macros(Only from macro frame)
 	Save spells to character 
-	Clear a binding
-	
+	Clear a binding/clear all bindings/clear bindings of type
+	Profiles (Except automatic loading)
 Todo:
-	Setup profiles
-	Clear all bindings
 	Settings
 	Binding Test
+
+	
