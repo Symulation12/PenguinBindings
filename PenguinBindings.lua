@@ -251,42 +251,31 @@ local function spellSelected(tooltip)
 	local sName,sRank,sID = tooltip:GetSpell()
 	if bindMode then
 		local mFocus = GetMouseFocus()
-		local script1,script2 = mFocus:GetScript("OnMouseWheel"),mFocus:GetScript("OnLeave")
 		mFocus:SetScript("OnMouseWheel",function(self,delta)
-			if delta == 1 then
-				local dialog = StaticPopup_Show("PENGUINBIND_SETBIND")
-				if dialog then
-					dialog.bindValue = sName
-					dialog.bindType = "spell"
-					dialog.button1:SetScript("OnKeyDown",function(self,button)
-						if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
-						if IsShiftKeyDown() then
-							button = "SHIFT-"..button
-						end
-						if IsControlKeyDown() then
-							button = "CTRL-"..button
-						end
-						if IsAltKeyDown() then
-							button ="ALT-"..button
-						end
-						self:SetText(button)
-					end)
-					
-				end
-			else
-				local bKey = GetBindingKey("SPELL "..sName)
-				if bKey then
-					local dialog = StaticPopup_Show("PENGUINBIND_CLEARBIND",sName)
+			if bindMode then
+				if delta == 1 then
+					local dialog = StaticPopup_Show("PENGUINBIND_SETBIND")
 					if dialog then
-						dialog.bindKey = bKey
+						dialog.bindValue = sName
+						dialog.bindType = "spell"
+						dialog.button1:SetScript("OnKeyDown",function(self,button)
+						if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
+							if IsShiftKeyDown() then button = "SHIFT-"..button end
+							if IsControlKeyDown() then button = "CTRL-"..button end
+							if IsAltKeyDown() then button ="ALT-"..button end
+							self:SetText(button)
+						end)
+					end
+				else
+					local bKey = GetBindingKey("SPELL "..sName)
+					if bKey then
+						local dialog = StaticPopup_Show("PENGUINBIND_CLEARBIND",sName)
+						if dialog then
+							dialog.bindKey = bKey
+						end
 					end
 				end
 			end
-		end)
-		mFocus:SetScript("OnLeave",function(self,motion)
-			mFocus:SetScript("OnMouseWheel",script1)
-			tooltip:Hide()
-			mFocus:SetScript("OnLeave",script2)
 		end)
 	end
 	local boundKey = GetBindingKey("SPELL "..sName)
@@ -299,42 +288,38 @@ local function itemSelected(tooltip)
 	local iName,iLink = tooltip:GetItem()
 	if bindMode then
 		local mFocus = GetMouseFocus()
-		local script1,script2 = mFocus:GetScript("OnMouseWheel"),mFocus:GetScript("OnLeave")
 		mFocus:SetScript("OnMouseWheel",function(self,delta)
-			if delta == 1 then
-				local dialog = StaticPopup_Show("PENGUINBIND_SETBIND")
-				if dialog then
-					dialog.bindValue = iName
-					dialog.bindType = "item"
-					dialog.button1:SetScript("OnKeyDown",function(self,button)
-						if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
-						if IsShiftKeyDown() then
-							button = "SHIFT-"..button
-						end
-						if IsControlKeyDown() then
-							button = "CTRL-"..button
-						end
-						if IsAltKeyDown() then
-							button ="ALT-"..button
-						end
-						self:SetText(button)
-					end)
-					
-				end
-			else
-				local bKey = GetBindingKey("ITEM "..iName)
-				if bKey then
-					local dialog = StaticPopup_Show("PENGUINBIND_CLEARBIND",iName)
+			if bindMode then
+				if delta == 1 then
+					local dialog = StaticPopup_Show("PENGUINBIND_SETBIND")
 					if dialog then
-						dialog.bindKey = bKey
+						dialog.bindValue = iName
+						dialog.bindType = "item"
+						dialog.button1:SetScript("OnKeyDown",function(self,button)
+							if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
+							if IsShiftKeyDown() then
+								button = "SHIFT-"..button
+							end
+							if IsControlKeyDown() then
+								button = "CTRL-"..button
+							end
+							if IsAltKeyDown() then
+								button ="ALT-"..button
+							end
+							self:SetText(button)
+						end)
+						
+					end
+				else
+					local bKey = GetBindingKey("ITEM "..iName)
+					if bKey then
+						local dialog = StaticPopup_Show("PENGUINBIND_CLEARBIND",iName)
+						if dialog then
+							dialog.bindKey = bKey
+						end
 					end
 				end
 			end
-		end)
-		mFocus:SetScript("OnLeave",function(self,motion)
-			mFocus:SetScript("OnMouseWheel",script1)
-			tooltip:Hide()
-			mFocus:SetScript("OnLeave",script2)
 		end)
 	end
 	local boundKey = GetBindingKey("ITEM "..iName)
@@ -346,43 +331,39 @@ end
 -- Slightly different from the other two, but same goal 
 function macroOpening(mWindow)
 	if bindMode then
-		pPrint("Macro frame opened, stealing on mouse down event")
-		local script1,script2 = MacroFrameSelectedMacroButton:GetScript("OnMouseWheel"),mWindow:GetScript("OnHide")
 		MacroFrameSelectedMacroButton:SetScript("OnMouseWheel",function(self,delta)
-			local mName,mIconTexture,mBody,mIsLocal = GetMacroInfo(MacroFrame.selectedMacro)
-			if delta == 1 then
-				local dialog = StaticPopup_Show("PENGUINBIND_SETBIND")
-				if dialog then
-					dialog.bindValue = mName
-					dialog.bindType = "macro"
-					dialog.button1:SetScript("OnKeyDown",function(self,button)
-						if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
-						if IsShiftKeyDown() then
-							button = "SHIFT-"..button
-						end
-						if IsControlKeyDown() then
-							button = "CTRL-"..button
-						end
-						if IsAltKeyDown() then
-							button ="ALT-"..button
-						end
-						self:SetText(button)
-					end)
-					
-				end
-			else
-				local bKey = GetBindingKey("MACRO "..mName)
-				if bKey then
-					local dialog = StaticPopup_Show("PENGUINBIND_CLEARBIND",mName)
+			if bindMode then
+				local mName,mIconTexture,mBody,mIsLocal = GetMacroInfo(MacroFrame.selectedMacro)
+				if delta == 1 then
+					local dialog = StaticPopup_Show("PENGUINBIND_SETBIND")
 					if dialog then
-						dialog.bindKey = bKey
+						dialog.bindValue = mName
+						dialog.bindType = "macro"
+						dialog.button1:SetScript("OnKeyDown",function(self,button)
+							if string.find(button,"SHIFT") or string.find(button,"CTRL") or string.find(button,"ALT") then return end
+							if IsShiftKeyDown() then
+								button = "SHIFT-"..button
+							end
+							if IsControlKeyDown() then
+								button = "CTRL-"..button
+							end
+							if IsAltKeyDown() then
+								button ="ALT-"..button
+							end
+							self:SetText(button)
+						end)
+						
+					end
+				else
+					local bKey = GetBindingKey("MACRO "..mName)
+					if bKey then
+						local dialog = StaticPopup_Show("PENGUINBIND_CLEARBIND",mName)
+						if dialog then
+							dialog.bindKey = bKey
+						end
 					end
 				end
 			end
-		end)
-		mWindow:SetScript("OnHide",function(self)
-			MacroFrameSelectedMacroButton:SetScript("OnMouseWheel",script1)
-			self:SetScript("OnHide",script2)
 		end)
 	end
 end
