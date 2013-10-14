@@ -212,7 +212,24 @@ local function onEvent(self,event,...)
 			end)
 		end
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then --on spec change
-		pPrint("You changed talents!")
+		local tGroup = ...
+		if UnitName("player") == "Symourn" then
+			if tGroup == 1 then
+				pPrint("Profile changed to 1")
+				clearAllBindings()
+				currentProfile = 1
+				PenguinBindVars.cP = 1
+				profileBind()
+				SaveBindings(2)
+			elseif tGroup == 2 then
+				pPrint("Profile changed to 2")
+				clearAllBindings()
+				currentProfile = 2
+				PenguinBindVars.cP = 2
+				profileBind()
+				SaveBindings(2)
+			end
+		end
 	elseif event == "UPDATE_SHAPESHIFT_FORM" then --TRANSFORM!
 	elseif event == "PLAYER_LOGOUT" then -- Loging out, save things!
 		SaveBindings(2)
@@ -408,6 +425,9 @@ SlashCmdList["PENGUINBINDINGS"] = function(argString,editbox)
 			else
 				pPrint("Profile doesn't exist")
 			end
+		elseif args[2] == trigger then
+			
+		
 		elseif args[2] == nil then
 			pPrint(currentProfile.."."..PenguinBindVars.profiles[currentProfile])
 		end
@@ -427,6 +447,7 @@ penguinFrame:RegisterEvent("ADDON_LOADED") --The addon was loaded
 penguinFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")-- You changed specs
 penguinFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM") -- YOU TRANSFORMED!
 penguinFrame:RegisterEvent("PLAYER_LOGOUT")
+penguinFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 penguinFrame:SetScript("OnEvent",onEvent) --A thing happened!
 GameTooltip:HookScript("OnTooltipSetSpell", spellSelected) --Tooltip has spell in it!
 GameTooltip:HookScript("OnTooltipSetItem",itemSelected)
