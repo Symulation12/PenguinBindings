@@ -413,7 +413,7 @@ SlashCmdList["PENGUINBINDINGS"] = function(argString,editbox)
 		end
 	elseif args[1] == "clear" then
 		if args[2] == "all" or args[2] == "spells" or args[2] == "macros" or args[2] == "items" then
-			local dialog = StaticPopup_Show("PENGUINBINDINGS_CLEARCHECK")
+			local dialog = StaticPopup_Show("PENGUINBIND_CLEARCHECK",args[2])
 			if dialog then
 				dialog.clearString = args[2]
 				pPrint("CLEARED!")
