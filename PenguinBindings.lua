@@ -225,17 +225,17 @@ local function onEvent(self,event,...)
 		local tGroup = ...
 		if UnitName("player") == "Symourn" then
 			if tGroup == 1 then
-				pPrint("Profile changed to 1")
-				clearAllBindings()
-				currentProfile = 1
-				PenguinBindVars.cP = 1
-				profileBind()
-				SaveBindings(2)
-			elseif tGroup == 2 then
 				pPrint("Profile changed to 2")
 				clearAllBindings()
 				currentProfile = 2
 				PenguinBindVars.cP = 2
+				profileBind()
+				SaveBindings(2)
+			elseif tGroup == 2 then
+				pPrint("Profile changed to 1")
+				clearAllBindings()
+				currentProfile = 1
+				PenguinBindVars.cP = 1
 				profileBind()
 				SaveBindings(2)
 			end

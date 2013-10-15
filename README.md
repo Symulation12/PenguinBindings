@@ -2,7 +2,7 @@ PenguinBindings
 ===============
 
 I was looking for a keybind addon for WoW 5.4, but couldn't find one that I liked(updated), so I'm making one.
-
+	It seems that attempting to bind spells from the talent menu causes issues.
 	How to use:
 	/pb bind to enter bind mode
 	If you mouse over a spell/item that has a tooltip, the binding will appear in the tooltip(if it has one)
